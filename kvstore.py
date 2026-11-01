@@ -29,19 +29,39 @@ Hint (read only if stuck after 10 mins):
 Run:  python3 kv_store_practice.py
 """
 
+deleted = object()
 
 class KVStore:
     def __init__(self):
-        pass  # TODO
+       self.data = {}
+       self.stack = []
 
     def set(self, key, value):
-        pass  # TODO
+        if self.stack:
+            self.stack[-1][key] = value
+        else:
+            self.data[key] = value
 
     def get(self, key):
-        pass  # TODO
+        #check transaction from new to old
+        for layer in reversed(self.stack):
+            if key in layer:
+                value = layer[key]
+                return None if value is deleted else value
+        return self.data.get(key)
 
     def delete(self, key):
-        pass  # TODO
+        #first checks if key exists
+        if self.get(key) is None:
+            return False
+
+        #check if transaction is open then mark deleted else remove from main store
+        if self.stack:
+            self.stack[-1][key] = deleted
+        else:
+            del self.data[key]
+
+        return True
 
     def begin(self):
         pass  # TODO
