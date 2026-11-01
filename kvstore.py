@@ -55,22 +55,43 @@ class KVStore:
         if self.get(key) is None:
             return False
 
-        #check if transaction is open then mark deleted else remove from main store
+        #check if transaction is open then remove but store in deleted..
         if self.stack:
             self.stack[-1][key] = deleted
         else:
-            del self.data[key]
+            del self.data[key]  #if no transaction, remove from main store, data
 
         return True
 
     def begin(self):
-        pass  # TODO
+        #begin will start a new transaction.. 
+        self.stack.append({})
 
     def commit(self):
-        pass  # TODO
+       if not self.stack:  #check for transaction, if no returns false
+           return False
+       #remeber, pop removes the first element in the stack and returns it
+       changes = self.stack.pop()  #so removes the top transaction(draft) from the stack
 
+       #check if another transaction is underneath
+       if self.stack:
+           self.stack[-1].update(changes)
+       else:
+           for key, value in changes.items():
+               if value is deleted:
+                   self.data.pop(key, None)
+               else:
+                   self.data[key] = value
+       return True
+               
+
+    #rollback cancels recent transaction and removes its changes
     def rollback(self):
-        pass  # TODO
+       if not self.stack:
+           return False
+
+       self.stack.pop()
+       return True
 
 
 # ---------------- TESTS (don't edit below) ----------------

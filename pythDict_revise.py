@@ -93,7 +93,7 @@ for q in someDict.values(): #can also do tha same for keys..
 #looping through key and val
 
 for a,b in someDict.items():
-    print(a,b)
+    print("item :", a,b)
 
 
 #copying dictionary use .dict() both are now separate copies. assisgning a var to a dict makes it the exact same copy, any changes made on the original dict is reflected on the copied in var (assigned.. )
